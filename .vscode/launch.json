@@ -12,8 +12,7 @@
             "console": "externalTerminal",
             "args": [
                 "e",
-                "test.bin",
-                "a"
+                "test.bin"
             ]
         }
     ]
