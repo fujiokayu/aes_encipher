@@ -8,6 +8,18 @@ from Crypto.Random import get_random_bytes
 MAX_BUFFER_SIZE = 4096
 KEY_LENGTH = 32
 
+
+class AesEncypher:
+    def __init__(self, mode, key):
+        self.key = key
+        self.mode = mode
+
+    def encrypt(self, data):
+        cipher = AES.new(self.key, self.mode)
+        ct_bytes = cipher.encrypt(data)
+        return b64encode(ct_bytes).decode('utf-8')
+        
+
 if __name__ == '__main__':
     
     parser = argparse.ArgumentParser(description='AES(CTR Mode) Encipher Program')
@@ -15,16 +27,12 @@ if __name__ == '__main__':
     parser.add_argument('arg2', help='file to en/de-crypt')
     args = parser.parse_args()
 
+    key = get_random_bytes(KEY_LENGTH)
+    aes_encipher = AesEncypher(AES.MODE_CTR, key)
+    cipher_text = ""
     with open(args.arg2, 'rb') as f:
         for bytes in iter(lambda: f.read(MAX_BUFFER_SIZE), b''):
-            data = bytes
+            cipher_text += aes_encipher.encrypt(bytes)
 
-    key = get_random_bytes(KEY_LENGTH)
-    cipher = AES.new(key, AES.MODE_CTR)
-    ct_bytes = cipher.encrypt(data)
+    print(cipher_text)
 
-    result = json.dumps({
-        'nonce':b64encode(cipher.nonce).decode('utf-8'), 
-        'ciphertext':b64encode(ct_bytes).decode('utf-8'), 
-        'base64 key':b64encode(key).decode('utf-8')})
-    print(result)
