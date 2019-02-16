@@ -1,7 +1,9 @@
+import sys
 import argparse
 import struct
 import json
 from base64 import b64encode
+from base64 import b64decode
 from Crypto.Cipher import AES
 from Crypto.Random import get_random_bytes
 
@@ -14,25 +16,55 @@ class AesEncypher:
         self.key = key
         self.mode = mode
 
-    def encrypt(self, data):
-        cipher = AES.new(self.key, self.mode)
-        ct_bytes = cipher.encrypt(data)
-        return b64encode(ct_bytes).decode('utf-8')
+    def encrypt(self, data): 
+        self.cipher = AES.new(self.key, self.mode)
+        return self.cipher.encrypt(data)
         
+    def decrypt(self, data, nonce):
+        self.cipher = AES.new(self.key, self.mode, nonce = nonce)
+        return self.cipher.decrypt(data)
+
+    def get_nonce(self):
+        return b64encode(self.cipher.nonce).decode('utf-8')
+
+    def get_key(self):
+        return b64encode(self.key).decode('utf-8')
 
 if __name__ == '__main__':
     
     parser = argparse.ArgumentParser(description='AES(CTR Mode) Encipher Program')
-    parser.add_argument('arg1', help='chose e (encrypt) or d (decrypt)')
-    parser.add_argument('arg2', help='file to en/de-crypt')
+    parser.add_argument('tool_mode', help='chose e (encrypt) or d (decrypt)')
+    parser.add_argument('input_file', help='file to en/de-crypt')
+    parser.add_argument('--nonce', help='nonce to decrypt', type = str, default = "")
+    parser.add_argument('--key', help='key to decrypt', type = str, default = "")
     args = parser.parse_args()
 
-    key = get_random_bytes(KEY_LENGTH)
+    if args.tool_mode != 'e' and args.tool_mode != 'd' :
+        print("error: args1: undefined parameter")
+        sys.exit()
+
+    encrypt_mode = True if args.tool_mode == 'e' else False
+    if not encrypt_mode and args.nonce == "":
+        print("error: args3 is null: need nonce to use decrypt mode")
+        sys.exit()
+    if not encrypt_mode and args.key == "":
+        print("error: args4 is null: need key to use decrypt mode")
+        sys.exit()
+
+    key = get_random_bytes(KEY_LENGTH) if args.key == "" else b64decode(args.key)
     aes_encipher = AesEncypher(AES.MODE_CTR, key)
-    cipher_text = ""
-    with open(args.arg2, 'rb') as f:
+    translated_bytes = bytearray(b"")
+
+    with open(args.input_file, 'rb') as f:
         for bytes in iter(lambda: f.read(MAX_BUFFER_SIZE), b''):
-            cipher_text += aes_encipher.encrypt(bytes)
+            if encrypt_mode:
+                translated_bytes.extend(aes_encipher.encrypt(bytes))
+                encrypt_info = json.dumps({'nonce':aes_encipher.get_nonce(), 'key':aes_encipher.get_key()})
+                print(encrypt_info)
+            else :
+                translated_bytes.extend(aes_encipher.decrypt(bytes, b64decode(args.nonce)))
 
-    print(cipher_text)
-
+    out_file_name = args.input_file
+    out_file_name += "_encrypted" if encrypt_mode else "_decrypted"
+    with open(out_file_name,'wb') as translated_file :
+        translated_file.write(translated_bytes)
