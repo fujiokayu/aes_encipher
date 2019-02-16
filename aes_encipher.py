@@ -2,33 +2,14 @@ import sys
 import argparse
 import struct
 import json
-from base64 import b64encode
 from base64 import b64decode
-from Crypto.Cipher import AES
 from Crypto.Random import get_random_bytes
+from Crypto.Cipher import AES
+from AesEncipher import AesEncipher
 
 MAX_BUFFER_SIZE = 4096
 KEY_LENGTH = 32
 
-
-class AesEncypher:
-    def __init__(self, mode, key):
-        self.key = key
-        self.mode = mode
-
-    def encrypt(self, data): 
-        self.cipher = AES.new(self.key, self.mode)
-        return self.cipher.encrypt(data)
-        
-    def decrypt(self, data, nonce):
-        self.cipher = AES.new(self.key, self.mode, nonce = nonce)
-        return self.cipher.decrypt(data)
-
-    def get_nonce(self):
-        return b64encode(self.cipher.nonce).decode('utf-8')
-
-    def get_key(self):
-        return b64encode(self.key).decode('utf-8')
 
 if __name__ == '__main__':
     
@@ -52,7 +33,7 @@ if __name__ == '__main__':
         sys.exit()
 
     key = get_random_bytes(KEY_LENGTH) if args.key == "" else b64decode(args.key)
-    aes_encipher = AesEncypher(AES.MODE_CTR, key)
+    aes_encipher = AesEncipher(AES.MODE_CTR, key)
     translated_bytes = bytearray(b"")
 
     with open(args.input_file, 'rb') as f:
