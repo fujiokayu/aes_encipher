@@ -11,8 +11,12 @@
             "program": "${file}",
             "console": "externalTerminal",
             "args": [
-                "e",
-                "test.bin"
+                "d",
+                "test.bin_encrypted",
+                "--nonce",
+                "kaSLDQd4mh8=",
+                "--key",
+                "hdS/jiYaEmLGnEm63qdFzQR14ufgBTKWdV0uwU+ylUo="
             ]
         }
     ]
