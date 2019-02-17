@@ -8,8 +8,6 @@ pylint = "*"
 
 [packages]
 pycryptodome = "*"
-pycryptodomex = "*"
-b64encode = "*"
 
 [requires]
 python_version = "3.6"
