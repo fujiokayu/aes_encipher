@@ -9,7 +9,7 @@ Encrypt / Decrypt your file by using AES CTR Mode.
 Need some packages, written in Pipfile.  
 Ofcourse you need python, too.
 
-And, you have to know I'm not tested enough.
+And, you have to know the fact that I'm not tested enough.
 
 ### encrypt mode
 
@@ -33,4 +33,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 * * *
 
-This product is provited AS IS and with all faults　without warranty or conditions of any kind.
+This product is provited AS IS and with all faults without warranty or conditions of any kind.

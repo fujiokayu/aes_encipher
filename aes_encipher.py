@@ -47,7 +47,8 @@ if __name__ == '__main__':
     encrypt_mode = True if args.tool_mode == 'e' else False
 
     key = get_random_bytes(KEY_LENGTH) if args.key == "" else b64decode(args.key)
-    aes_encipher = AesEncipher(AES.MODE_CTR, key)
+    
+    aes_encipher = AesEncipher(AES.MODE_CTR, key, args.nonce)
     translated_bytes = bytearray(b"")
 
     with open(args.input_file, 'rb') as f:
@@ -55,11 +56,13 @@ if __name__ == '__main__':
             if encrypt_mode:
                 translated_bytes.extend(aes_encipher.encrypt(bytes))
                 encrypt_info = json.dumps({'nonce':aes_encipher.get_nonce(), 'key':aes_encipher.get_key()})
-                print(encrypt_info)
             else :
-                translated_bytes.extend(aes_encipher.decrypt(bytes, b64decode(args.nonce)))
+                translated_bytes.extend(aes_encipher.decrypt(bytes))
 
     out_file_name = args.input_file
     out_file_name += "_encrypted" if encrypt_mode else "_decrypted"
     with open(out_file_name,'wb') as translated_file :
         translated_file.write(translated_bytes)
+    
+    if encrypt_mode:
+        print(encrypt_info)
