@@ -24,7 +24,7 @@ Its need to decrypt the file.
 ### decrypt mode
 
 ```
-python aes_encipher.py d file_to_encrypt --nonce base64encoded_nonce --key base64encoded_key
+python aes_encipher.py d file_to_decrypt --nonce base64encoded_nonce --key base64encoded_key
 ```
 
 ## License
