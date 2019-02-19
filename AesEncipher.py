@@ -1,16 +1,14 @@
 from Crypto.Cipher import AES
 from base64 import b64encode
-from base64 import b64decode
 
 
 class AesEncipher:
-    def __init__(self, mode, key, encoded_nonce = ""):
+    def __init__(self, mode, key, nonce = ""):
         self.key = key
         self.mode = mode
-        if len(encoded_nonce) == 0:
+        if len(nonce) == 0:
             self.cipher = AES.new(self.key, self.mode)
         else:
-            nonce = b64decode(encoded_nonce)
             self.cipher = AES.new(self.key, self.mode, nonce = nonce)
 
     def encrypt(self, data):         

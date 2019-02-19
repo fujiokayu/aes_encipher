@@ -1,7 +1,6 @@
 import sys
 import os
 import argparse
-import struct
 import json
 from base64 import b64decode
 from Crypto.Random import get_random_bytes
@@ -13,7 +12,7 @@ MAX_BUFFER_SIZE = 4096
 KEY_LENGTH = 32
 
 
-def set_argument_parser():
+def parse_args():
 
     parser = argparse.ArgumentParser(description='AES(CTR Mode) Encipher Program')
     parser.add_argument('tool_mode', help='chose e (encrypt) or d (decrypt)')
@@ -41,21 +40,20 @@ def check_args(args):
 
 if __name__ == '__main__':
     
-    args = set_argument_parser()
+    args = parse_args()
     check_args(args)
 
     encrypt_mode = True if args.tool_mode == 'e' else False
-
     key = get_random_bytes(KEY_LENGTH) if args.key == "" else b64decode(args.key)
+    nonce = b64decode(args.nonce) if not len(args.nonce) == 0 else ""
     
-    aes_encipher = AesEncipher(AES.MODE_CTR, key, args.nonce)
+    aes_encipher = AesEncipher(AES.MODE_CTR, key, nonce)
     translated_bytes = bytearray(b"")
 
     with open(args.input_file, 'rb') as f:
         for bytes in iter(lambda: f.read(MAX_BUFFER_SIZE), b''):
             if encrypt_mode:
                 translated_bytes.extend(aes_encipher.encrypt(bytes))
-                encrypt_info = json.dumps({'nonce':aes_encipher.get_nonce(), 'key':aes_encipher.get_key()})
             else :
                 translated_bytes.extend(aes_encipher.decrypt(bytes))
 
@@ -65,4 +63,5 @@ if __name__ == '__main__':
         translated_file.write(translated_bytes)
     
     if encrypt_mode:
+        encrypt_info = json.dumps({'nonce':aes_encipher.get_nonce(), 'key':aes_encipher.get_key()})
         print(encrypt_info)
