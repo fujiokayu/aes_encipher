@@ -1,4 +1,4 @@
-# aes_encipher
+# tiny_encryptor
 
 Encrypt / Decrypt your file by using AES CTR Mode.
 
@@ -6,13 +6,18 @@ Encrypt / Decrypt your file by using AES CTR Mode.
 
 ### Prerequisites
 
-Need [pycryptodome](https://pycryptodome.readthedocs.io/en/latest/).  
-And, you have to know the fact that I'm not tested enough.
+```
+pip install pycryptodome
+```  
+or  
+```
+pipenv install
+```
 
 ### encrypt mode
 
 ```
-python aes_encipher.py e file_to_encrypt
+python tiny_encryptor.py e file_to_encrypt
 ```
 
 When you encrypt your file, the key and nonce will make automaticaly, and will encode them to base64.  
@@ -20,13 +25,13 @@ Its need to decrypt the file.
 
 If you want to use specific key and nonce, set args as below; 
 ```
-python aes_encipher.py e file_to_encrypt --nonce base64encoded_nonce --key base64encoded_key
+python tiny_encryptor.py e file_to_encrypt --nonce base64encoded_nonce --key base64encoded_key
 ```
 
 ### decrypt mode
 
 ```
-python aes_encipher.py d file_to_decrypt --nonce base64encoded_nonce --key base64encoded_key
+python tiny_encryptor.py d file_to_decrypt --nonce base64encoded_nonce --key base64encoded_key
 ```
 
 ## License

@@ -9,5 +9,3 @@ pylint = "*"
 [packages]
 pycryptodome = "*"
 
-[requires]
-python_version = "3.6"
